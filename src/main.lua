@@ -19,6 +19,7 @@ for i=1,opt.nEpochs do
     if opt.trainIters > 0 then train() end
     if opt.validIters > 0 then valid() end
     epoch = epoch + 1
+    -- collect the garbage,
     collectgarbage()
 end
 
