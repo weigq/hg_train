@@ -21,6 +21,7 @@ end
 
 -- Criterion (can be set in the opt.task file as well)
 if not criterion then
+    -- ?
     criterion = nn[opt.crit .. 'Criterion']()
 end
 
@@ -30,6 +31,7 @@ if opt.GPU ~= -1 then
     model:cuda()
     criterion:cuda()
     
+    -- use the fastest convolution algorithm
     cudnn.fastest = true
     cudnn.benchmark = true
 end

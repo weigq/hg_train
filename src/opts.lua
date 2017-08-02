@@ -1,6 +1,6 @@
 if not opt then
 
-projectDir = projectDir or paths.concat(os.getenv('HOME'),'pose-hg-train')
+projectDir = projectDir or paths.concat(os.getenv('HOME'),'hg_train')
 
 local function parse(arg)
     local cmd = torch.CmdLine()
@@ -48,8 +48,8 @@ local function parse(arg)
     cmd:text(' ---------- Training options -----------------------------------')
     cmd:text()
     cmd:option('-nEpochs',           100, 'Total number of epochs to run')
-    cmd:option('-trainIters',       8000, 'Number of train iterations per epoch')
-    cmd:option('-trainBatch',          6, 'Mini-batch size')
+    cmd:option('-trainIters',       2000, 'Number of train iterations per epoch')
+    cmd:option('-trainBatch',          2, 'Mini-batch size')
     cmd:option('-validIters',       1000, 'Number of validation iterations per epoch')
     cmd:option('-validBatch',          1, 'Mini-batch size for validation')
     cmd:option('-nValidImgs',       1000, 'Number of images to use for validation. Only relevant if randomValid is set to true')

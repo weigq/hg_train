@@ -5,6 +5,8 @@ saved = {idxs = torch.Tensor(validSamples),
 if opt.saveInput then saved.input = torch.Tensor(validSamples, unpack(ref.inputDim)) end
 if opt.saveHeatmaps then saved.heatmaps = torch.Tensor(validSamples, unpack(ref.outputDim[1])) end
 
+
+
 -- Main processing step
 function step(tag)
     local avgLoss, avgAcc = 0.0, 0.0
@@ -12,9 +14,11 @@ function step(tag)
     local param, gradparam = model:getParameters()
     local function evalFn(x) return criterion.output, gradparam end
 
+    -- set the module to `train = true`
     if tag == 'train' then
         model:training()
         set = 'train'
+    -- set the module to `train = false`
     else
         model:evaluate()
         if tag == 'predict' then
@@ -31,18 +35,23 @@ function step(tag)
     end
 
     local nIters = opt[set .. 'Iters']
+    --
+    --
+    -- --> dataloader.lua
     for i,sample in loader[set]:run() do
         xlua.progress(i, nIters)
         local input, label, indices = unpack(sample)
 
         if opt.GPU ~= -1 then
             -- Convert to CUDA
+            -- applyFn <-- img.lua
             input = applyFn(function (x) return x:cuda() end, input)
             label = applyFn(function (x) return x:cuda() end, label)
         end
 
         -- Do a forward pass and calculate loss
         local output = model:forward(input)
+        -- err is a scalar
         local err = criterion:forward(output, label)
         avgLoss = avgLoss + err / nIters
 
@@ -70,7 +79,8 @@ function step(tag)
         end
 
         -- Calculate accuracy
-        avgAcc = avgAcc + accuracy(output, label) / nIters
+        -- accuracy <-- pose.lua
+         avgAcc = avgAcc + accuracy(output, label) / nIters
     end
 
 

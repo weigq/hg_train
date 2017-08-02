@@ -11,7 +11,7 @@ ffi = require 'ffi'
 torch.setdefaulttensortype('torch.FloatTensor')
 
 -- Project directory
-projectDir = paths.concat(os.getenv('HOME'),'pose-hg-train')
+projectDir = paths.concat(os.getenv('HOME'),'hg_train')
 
 -- Process command line arguments, load helper functions
 paths.dofile('opts.lua')
@@ -40,7 +40,10 @@ end
 -- Load up task specific variables / functions
 paths.dofile('util/' .. opt.task .. '.lua')
 
+
+
 -- Optimization function and hyperparameters
+-- optim package
 optfn = optim[opt.optMethod]
 if not optimState then
     optimState = {
@@ -52,6 +55,8 @@ if not optimState then
         epsilon = opt.epsilon
     }
 end
+
+
 
 -- Print out input / output tensor sizes
 if not ref.alreadyChecked then
@@ -77,6 +82,7 @@ if not ref.alreadyChecked then
     printDims("Input is a ", ref.inputDim)
     printDims("Output is a ", ref.outputDim)
 
+    -- opt.idxRef <-- mpii.lua
     print("# of training images:", opt.idxRef.train:size(1))
     print("# of validation images:", opt.idxRef.valid:size(1))
 
