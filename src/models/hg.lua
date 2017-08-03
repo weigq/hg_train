@@ -1,3 +1,13 @@
+--- create new network model
+--- Function:
+--- 1> createModel()
+---    return:
+---    model
+--- 2> hourglass()
+
+
+
+
 paths.dofile('layers/Residual.lua')
 
 local function hourglass(n, f, inp)
@@ -24,18 +34,25 @@ local function hourglass(n, f, inp)
     return nn.CAddTable()({up1,up2})
 end
 
+
+
 local function lin(numIn,numOut,inp)
     -- Apply 1x1 convolution, stride 1, no padding
     local l = nnlib.SpatialConvolution(numIn,numOut,1,1,1,1,0,0)(inp)
     return nnlib.ReLU(true)(nn.SpatialBatchNormalization(numOut)(l))
 end
 
+
+
 function createModel()
 
     local inp = nn.Identity()()
 
     -- Initial processing of the image
-    local cnv1_ = nnlib.SpatialConvolution(3,64,7,7,2,2,3,3)(inp)           -- 128
+    --- nn.SpatialConvolution(nInputPlane, nOutputPlane, kW, kH, [dW], [dH], [padW], [padH])
+    --- 256 -> 128
+    local cnv1_ = nnlib.SpatialConvolution(3,64,7,7,2,2,3,3)(inp)          
+    --- true: in-place operation 
     local cnv1 = nnlib.ReLU(true)(nn.SpatialBatchNormalization(64)(cnv1_))
     local r1 = Residual(64,128)(cnv1)
     local pool = nnlib.SpatialMaxPooling(2,2,2,2)(r1)                       -- 64
@@ -68,7 +85,7 @@ function createModel()
 
     -- Final model
     local model = nn.gModule({inp}, out)
-
+    
     return model
 
 end

@@ -1,3 +1,8 @@
+--- initialize network model
+--- return:
+--- model:cuda()
+--- criterion:cuda()
+
 --- Load up network model or initialize from scratch
 paths.dofile('models/' .. opt.netType .. '.lua')
 

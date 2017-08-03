@@ -11,7 +11,9 @@ if opt.saveHeatmaps then saved.heatmaps = torch.Tensor(validSamples, unpack(ref.
 function step(tag)
     local avgLoss, avgAcc = 0.0, 0.0
     local output, err, idx
+    -- get learnable parameters and the gradients wrt the parameters
     local param, gradparam = model:getParameters()
+
     local function evalFn(x) return criterion.output, gradparam end
 
     -- set the module to `train = true`
@@ -35,9 +37,10 @@ function step(tag)
     end
 
     local nIters = opt[set .. 'Iters']
-    --
-    --
+
+
     -- --> dataloader.lua
+    -- ?
     for i,sample in loader[set]:run() do
         xlua.progress(i, nIters)
         local input, label, indices = unpack(sample)

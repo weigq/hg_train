@@ -1,3 +1,9 @@
+-- Residual module
+-- FUnction:
+-- 1> Residual()
+--    return: nn.Sequential()
+-- nInput -> nOutput
+
 local conv = nnlib.SpatialConvolution
 local batchnorm = nn.SpatialBatchNormalization
 local relu = nnlib.ReLU
