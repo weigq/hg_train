@@ -1,3 +1,5 @@
+-- class: pose.Dataset
+
 local M = {}
 Dataset = torch.class('pose.Dataset',M)
 

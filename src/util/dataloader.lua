@@ -29,6 +29,8 @@ function DataLoader.create(opt, dataset, ref)
    return loaders
 end
 
+
+-- initialization 
 function DataLoader:__init(opt, dataset, ref, split)
     local function preinit()
         paths.dofile('dataset/' .. opt.dataset .. '.lua')
@@ -41,6 +43,7 @@ function DataLoader:__init(opt, dataset, ref, split)
 
     local function main(idx)
         torch.setnumthreads(1)
+        -- size() <- mpii.lua
         return dataset:size(split)
     end
 
@@ -48,25 +51,39 @@ function DataLoader:__init(opt, dataset, ref, split)
     self.threads = threads
     self.iters = opt[split .. 'Iters']
     self.batchsize = opt[split .. 'Batch']
+    --
+    --?nsample
     self.nsamples = sizes[1][1]
     self.split = split
 end
 
+
+
 function DataLoader:size()
     return self.iters
 end
+
+
 
 function DataLoader:run()
     local threads = self.threads
     local size = self.iters * self.batchsize
 
     local idxs = torch.range(1,self.nsamples)
+
+
     for i = 2,math.ceil(size/self.nsamples) do
         idxs = idxs:cat(torch.range(1,self.nsamples))
     end
+
+
     -- Shuffle indices
+    -- randperm(n) -> return a random permutation of integers from 1 to n
+    -- index() -> 1- the dimesion to index
     idxs = idxs:index(1,torch.randperm(idxs:size(1)):long()) 
+
     -- Map indices to training/validation/test split
+    -- idxRef <-- mpii.lua
     idxs = opt.idxRef[self.split]:index(1,idxs:long())
 
     local n, idx, sample = 0, 1, nil
