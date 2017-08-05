@@ -42,6 +42,7 @@ function step(tag)
     -- --> dataloader.lua
     -- ?
     for i,sample in loader[set]:run() do
+        -- visualization
         xlua.progress(i, nIters)
         local input, label, indices = unpack(sample)
 
