@@ -1,4 +1,5 @@
 -- class: pose.Dataset
+-- define opt.idxRef
 
 local M = {}
 Dataset = torch.class('pose.Dataset',M)
@@ -8,8 +9,9 @@ function Dataset:__init()
     self.accIdxs = {1,2,3,4,5,6,11,12,15,16}
     self.flipRef = {{1,6},   {2,5},   {3,4},
                     {11,16}, {12,15}, {13,14}}
+
     -- Pairs of joints for drawing skeleton
-    self.skeletonRef = {{1,2,1},    {2,3,1},    {3,7,1},
+    self.skeletonRef = {{1,2,1},    {2,3,1},    {3,7,1}, 
                         {4,5,2},    {4,7,2},    {5,6,2},
                         {7,9,0},    {9,10,0},
                         {13,9,3},   {11,12,3},  {12,13,3},
@@ -19,11 +21,16 @@ function Dataset:__init()
     local tags = {'index','person','imgname','part','center','scale',
                   'normalize','torsoangle','visible','multi','istrain'}
     local a = hdf5.open(paths.concat(projectDir,'data/mpii/annot.h5'),'r')
+
+
     for _,tag in ipairs(tags) do annot[tag] = a:read(tag):all() end
     a:close()
+
+    -- ?
     annot.index:add(1)
     annot.person:add(1)
     annot.part:add(1)
+
 
     -- Index reference
     if not opt.idxRef then
@@ -31,6 +38,7 @@ function Dataset:__init()
         opt.idxRef = {}
         opt.idxRef.test = allIdxs[annot.istrain:eq(0)]
         opt.idxRef.train = allIdxs[annot.istrain:eq(1)]
+
 
         if not opt.randomValid then
             -- Use same validation set as used in our paper (and same as Tompson et al)
