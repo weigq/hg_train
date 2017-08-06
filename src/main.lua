@@ -15,7 +15,7 @@ ref.log.valid = Logger(paths.concat(opt.save, 'valid.log'), opt.continue)
 
 -- Main training loop
 for i=1,opt.nEpochs do
-    print("==> Starting epoch: " .. epoch .. "/" .. (opt.nEpochs + opt.epochNumber - 1))
+    print("==> Starting epoch: " .. epoch .. "/" .. opt.nEpochs)
     if opt.trainIters > 0 then train() end
     if opt.validIters > 0 then valid() end
     epoch = epoch + 1

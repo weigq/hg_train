@@ -107,15 +107,22 @@ if opt.branch ~= 'none' or opt.continue then
     opt.save = opt_.save
     opt.load = opt_.load
     opt.continue = opt_.continue
-    for i = 1,#setOpts do opt[setOpts[i]] = opt_[setOpts[i]] end
 
-    epoch = opt.lastEpoch + 1
+    for i = 1,#setOpts do
+        opt[setOpts[i]] = opt_[setOpts[i]]
+        -- print(setOpts[i])
+    end
+    
+    
     
     -- If there's a previous optimState, load that too
     if paths.filep(opt.load .. '/optimState.t7') then
         optimState = torch.load(opt.load .. '/optimState.t7')
         optimState.learningRate = opt.LR
     end
+    -- print(opt)
+    opt.lastEpoch = 85
+    epoch = opt.lastEpoch + 1
 
 else epoch = 1 end
 opt.epochNumber = epoch
