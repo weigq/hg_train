@@ -121,7 +121,7 @@ if opt.branch ~= 'none' or opt.continue then
         optimState.learningRate = opt.LR
     end
     -- print(opt)
-    opt.lastEpoch = 85
+    opt.lastEpoch = 90
     epoch = opt.lastEpoch + 1
 
 else epoch = 1 end
