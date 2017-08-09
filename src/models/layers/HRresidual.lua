@@ -1,8 +1,5 @@
--- Residual module
--- FUnction:
--- 1> Residual()
---    return: nn.Sequential()
--- nInput -> nOutput
+--- function:
+--- HRResidual()
 
 local conv = nnlib.SpatialConvolution
 local batchnorm = nn.SpatialBatchNormalization
@@ -47,7 +44,7 @@ local function HRbranch(numIn, numOut)
 end
 
 -- Residual block
-function Residual(numIn,numOut)
+function HRResidual(numIn,numOut)
     return nn.Sequential()
         :add(nn.ConcatTable()
             :add(convBlock(numIn,numOut))

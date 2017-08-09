@@ -8,26 +8,27 @@
 
 
 
-paths.dofile('layers/Residual.lua')
+paths.dofile('layers/residual.lua')
+paths.dofile('layers/HRresidual.lua')
 
 local function hourglass(n, f, inp)
     -- Upper branch
     local up1 = inp
-    for i = 1,opt.nModules do up1 = Residual(f,f)(up1) end
+    for i = 1,opt.nModules do up1 = HRResidual(f,f)(up1) end
 
     -- Lower branch
     local low1 = nnlib.SpatialMaxPooling(2,2,2,2)(inp)
-    for i = 1,opt.nModules do low1 = Residual(f,f)(low1) end
+    for i = 1,opt.nModules do low1 = HRResidual(f,f)(low1) end
     local low2
 
     if n > 1 then low2 = hourglass(n-1,f,low1)
     else
         low2 = low1
-        for i = 1,opt.nModules do low2 = Residual(f,f)(low2) end
+        for i = 1,opt.nModules do low2 = HRResidual(f,f)(low2) end
     end
 
     local low3 = low2
-    for i = 1,opt.nModules do low3 = Residual(f,f)(low3) end
+    for i = 1,opt.nModules do low3 = HRResidual(f,f)(low3) end
     local up2 = nn.SpatialUpSamplingNearest(2)(low3)
 
     -- Bring two branches together

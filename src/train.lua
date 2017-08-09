@@ -1,4 +1,5 @@
 -- Prepare tensors for saving network output
+--
 local validSamples = opt.validIters * opt.validBatch
 saved = {idxs = torch.Tensor(validSamples),
          preds = torch.Tensor(validSamples, unpack(ref.predDim))}
