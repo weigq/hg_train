@@ -35,7 +35,7 @@ end
 
 
 -- Residual block
-function HRResidual(numIn,numOut)
+function Residual(numIn,numOut)
     return nn.Sequential()
         :add(nn.ConcatTable()
             :add(convBlock(numIn,numOut))

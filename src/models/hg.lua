@@ -8,27 +8,27 @@
 
 
 
-paths.dofile('layers/Residual.lua')
-paths.dofile('layers/HRResidual.lua')
+paths.dofile('layers/residual.lua')
+paths.dofile('layers/HRresidual.lua')
 
 local function hourglass(n, f, inp)
     -- Upper branch
     local up1 = inp
-    for i = 1,opt.nModules do up1 = Residual(f,f)(up1) end
+    for i = 1,opt.nModules do up1 = HRResidual(f,f)(up1) end
 
     -- Lower branch
     local low1 = nnlib.SpatialMaxPooling(2,2,2,2)(inp)
-    for i = 1,opt.nModules do low1 = Residual(f,f)(low1) end
+    for i = 1,opt.nModules do low1 = HRResidual(f,f)(low1) end
     local low2
 
     if n > 1 then low2 = hourglass(n-1,f,low1)
     else
         low2 = low1
-        for i = 1,opt.nModules do low2 = Residual(f,f)(low2) end
+        for i = 1,opt.nModules do low2 = HRResidual(f,f)(low2) end
     end
 
     local low3 = low2
-    for i = 1,opt.nModules do low3 = Residual(f,f)(low3) end
+    for i = 1,opt.nModules do low3 = HRResidual(f,f)(low3) end
     local up2 = nn.SpatialUpSamplingNearest(2)(low3)
 
     -- Bring two branches together
@@ -55,10 +55,10 @@ function createModel()
     local cnv1_ = nnlib.SpatialConvolution(3,64,7,7,2,2,3,3)(inp)          
     --- true: in-place operation 
     local cnv1 = nnlib.ReLU(true)(nn.SpatialBatchNormalization(64)(cnv1_))
-    local r1 = HRResidual(64,128)(cnv1)
+    local r1 = Residual(64,128)(cnv1)
     local pool = nnlib.SpatialMaxPooling(2,2,2,2)(r1)                       -- 64
-    local r4 = HRResidual(128,128)(pool)
-    local r5 = HRResidual(128,opt.nFeats)(r4)
+    local r4 = Residual(128,128)(pool)
+    local r5 = Residual(128,opt.nFeats)(r4)
 
     local out = {}
     local inter = r5
@@ -68,7 +68,7 @@ function createModel()
 
         -- Residual layers at output resolution
         local ll = hg
-        for j = 1,opt.nModules do ll = HRResidual(opt.nFeats,opt.nFeats)(ll) end
+        for j = 1,opt.nModules do ll = Residual(opt.nFeats,opt.nFeats)(ll) end
         -- Linear layer to produce first set of predictions
         ll = lin(opt.nFeats,opt.nFeats,ll)
 
